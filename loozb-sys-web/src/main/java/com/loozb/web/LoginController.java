@@ -1,8 +1,7 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.Constants;
 import com.loozb.core.base.AbstractController;
-import com.loozb.core.base.Parameter;
 import com.loozb.core.bind.annotation.CurrentUser;
 import com.loozb.core.bind.annotation.Token;
 import com.loozb.core.config.Resources;
@@ -15,11 +14,15 @@ import com.loozb.model.SysResource;
 import com.loozb.model.SysSession;
 import com.loozb.model.SysUser;
 import com.loozb.model.ext.Authority;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysAuthService;
+import com.loozb.service.SysResourceService;
+import com.loozb.service.SysSessionService;
+import com.loozb.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,11 +37,18 @@ import java.util.*;
  */
 @RestController
 @Api(value = "登录接口", description = "登录接口")
-public class   LoginController extends AbstractController<ISysProvider> {
+public class  LoginController extends AbstractController<SysUserService> {
 
-    public String getService() {
-        return "sysUserService";
-    }
+    @Autowired
+    private SysAuthService sysAuthService;
+    @Autowired
+    private SysResourceService sysResourceService;
+
+    @Autowired
+    private SysSessionService sysSessionService;
+
+    @Autowired
+    private SysUserService sysUserService;
 
     // 登录
     @ApiOperation(value = "用户登录")
@@ -51,11 +61,7 @@ public class   LoginController extends AbstractController<ISysProvider> {
 
         Map<String, Object> params = ParamUtil.getMap();
         params.put("account", account);
-
-        Parameter parameter = new Parameter("sysUserService", "queryList").setMap(params);
-        logger.info("{} execute sysUserService.queryList start...", parameter.getNo());
-        List<?> list = provider.execute(parameter).getList();
-        logger.info("{} execute sysUserService.queryList end.", parameter.getNo());
+        List<?> list = service.queryList(params);
         if (list.size() == 1) {
             SysUser user = (SysUser) list.get(0);
             if (user == null) {
@@ -74,12 +80,10 @@ public class   LoginController extends AbstractController<ISysProvider> {
 
             if (user.getPassword().equals(PasswordUtil.decryptPassword(password, user.getSalt()))) {
                 //获取角色信息
-                Parameter rolesParameter = new Parameter("sysAuthService", "findRoles").setId(userId);
-                Set<String> roles = (Set<String>) provider.execute(rolesParameter).getSet();
+                Set<String> roles = (Set<String>) sysAuthService.findRoles(userId);
 
                 //获取权限信息
-                Parameter permissionsParameter = new Parameter("sysAuthService", "findPermissions").setId(userId);
-                Set<String> permissions = (Set<String>) provider.execute(permissionsParameter).getSet();
+                Set<String> permissions = (Set<String>) sysAuthService.findPermissions(userId);
 
                 //获取资源信息
                 List<SysResource> menus = null;
@@ -88,8 +92,7 @@ public class   LoginController extends AbstractController<ISysProvider> {
                 if (StringUtils.isNotBlank(menuCache)) {
                     menus = JsonUtils.jsonToList(menuCache, SysResource.class);
                 } else {
-                    Parameter resourceParameter = new Parameter("sysResourceService", "getMenus").setId(userId);
-                    menus = (List<SysResource>) provider.execute(resourceParameter).getList();
+                    menus = (List<SysResource>) sysResourceService.getMenus(userId);
                     if (menus != null) {
                         CacheUtil.getCache().set(menuCacheKey, JsonUtils.objectToJson(menus));
                     }
@@ -113,19 +116,13 @@ public class   LoginController extends AbstractController<ISysProvider> {
         // 踢出用户
         SysSession record = new SysSession();
         record.setAccount(account);
-        Parameter parameter = new Parameter("sysSessionService", "querySessionIdByAccount").setModel(record);
-        logger.info("{} execute querySessionIdByAccount start...", parameter.getNo());
-        List<?> sessions = provider.execute(parameter).getList();
-        logger.info("{} execute querySessionIdByAccount end.", parameter.getNo());
+        List<?> sessions = sysSessionService.querySessionIdByAccount(record);
 
         //到达这一步时，说明用户已经在线了，此时通过account查处SysSessioin后，如果有值进行更新，如果没有新增
         if(sessions != null && sessions.size() > 0) {
             //删除
             record.setUserId(user.getId());
-            parameter = new Parameter("sysSessionService", "deleteByUserId").setModel(record);
-            logger.info("{} execute deleteByUserId start...", parameter.getNo());
-            provider.execute(parameter);
-            logger.info("{} execute deleteByUserId end.", parameter.getNo());
+            sysSessionService.deleteByUserId(record);
         }
         // 保存用户
         record.setSessionId(accessToken);
@@ -133,10 +130,7 @@ public class   LoginController extends AbstractController<ISysProvider> {
         record.setIp(host);
         record.setUserId(user.getId());
         record.setStartTime(new Date());
-        parameter = new Parameter("sysSessionService", "update").setModel(record);
-        logger.info("{} execute sysSessionService.update start...", parameter.getNo());
-        provider.execute(parameter);
-        logger.info("{} execute sysSessionService.update end.", parameter.getNo());
+        sysSessionService.update(record);
     }
 
     // 登出
@@ -154,7 +148,7 @@ public class   LoginController extends AbstractController<ISysProvider> {
         Assert.notNull(sysUser.getUsername(), "ACCOUNT");
         Assert.notNull(sysUser.getPassword(), "PASSWORD");
         sysUser.setPassword(SecurityUtil.encryptPassword(sysUser.getPassword()));
-        provider.execute(new Parameter("sysUserService", "update").setModel(sysUser));
+        sysUserService.update(sysUser);
         if (LoginHelper.login(sysUser.getUsername(), sysUser.getPassword())) {
             return setSuccessModelMap(modelMap);
         }

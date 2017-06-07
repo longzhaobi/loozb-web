@@ -16,6 +16,7 @@
 	<modules>
 		<module>loozb-common</module>
 		<module>loozb-sys-model</module>
+		<module>loozb-sys-service</module>
 		<module>loozb-sys-web</module>
 	</modules>
 </project>

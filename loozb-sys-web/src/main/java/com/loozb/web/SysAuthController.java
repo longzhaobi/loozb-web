@@ -1,10 +1,9 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
-import com.loozb.core.base.Parameter;
 import com.loozb.core.support.Assert;
 import com.loozb.core.util.ParamUtil;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysAuthService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,13 +26,7 @@ import java.util.Map;
 @RestController
 @Api(value = "授权管理", description = "授权管理")
 @RequestMapping(value = "/auths")
-public class SysAuthController extends AbstractController<ISysProvider> {
-
-    @Override
-    public String getService() {
-        return "sysAuthService";
-    }
-
+public class SysAuthController extends AbstractController<SysAuthService> {
     /**
      * 用户授权
      * @param modelMap
@@ -48,8 +41,7 @@ public class SysAuthController extends AbstractController<ISysProvider> {
         Map<String, Object> params = ParamUtil.getMap();
         params.put("id", id);
         params.put("roleIds", roleIds);
-        Parameter parameter = new Parameter(getService(), "allot").setMap(params);
-        provider.execute(parameter);
+        service.allot(params);
         return setSuccessModelMap(modelMap);
     }
 }

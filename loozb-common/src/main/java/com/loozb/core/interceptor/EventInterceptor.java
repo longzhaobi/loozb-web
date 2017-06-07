@@ -1,12 +1,11 @@
 package com.loozb.core.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import com.loozb.core.base.BaseProvider;
-import com.loozb.core.base.Parameter;
 import com.loozb.core.util.DateUtil;
 import com.loozb.core.util.ExceptionUtil;
 import com.loozb.core.util.WebUtil;
 import com.loozb.model.SysEvent;
+import com.loozb.service.SysEventService;
 import cz.mallat.uasparser.OnlineUpdater;
 import cz.mallat.uasparser.UASparser;
 import cz.mallat.uasparser.UserAgentInfo;
@@ -15,8 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.NamedThreadLocal;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +30,7 @@ import java.util.concurrent.Executors;
  * @author ShenHuaJie
  * @version 2016年6月14日 下午6:18:46
  */
+@Component
 public class EventInterceptor extends BaseInterceptor {
 	protected static Logger logger = LogManager.getLogger();
 
@@ -38,8 +38,7 @@ public class EventInterceptor extends BaseInterceptor {
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 
 	@Autowired
-	@Qualifier("sysProvider")
-	protected BaseProvider sysProvider;
+	private SysEventService sysEventService;
 
 	static UASparser uasParser = null;
 
@@ -104,8 +103,7 @@ public class EventInterceptor extends BaseInterceptor {
 							record.setRemark(ExceptionUtil.getStackTraceAsString(ex));
 						}
 
-						Parameter parameter = new Parameter("sysEventService", "update").setModel(record);
-						sysProvider.execute(parameter);
+						sysEventService.update(record);
 
 						// 内存信息
 						if (logger.isDebugEnabled()) {

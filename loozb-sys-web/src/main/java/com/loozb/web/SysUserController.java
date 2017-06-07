@@ -1,13 +1,12 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
-import com.loozb.core.base.Parameter;
 import com.loozb.core.support.Assert;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.core.util.PasswordUtil;
 import com.loozb.core.util.WebUtil;
 import com.loozb.model.SysUser;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,12 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Api(value = "用户管理", description = "用户管理")
 @RequestMapping(value = "/users")
-public class SysUserController extends AbstractController<ISysProvider> {
-
-    @Override
-    public String getService() {
-        return "sysUserService";
-    }
+public class SysUserController extends AbstractController<SysUserService> {
 
     // 查询用户列表
     @ApiOperation(value = "查询用户列表，默认查询20条")
@@ -74,8 +68,7 @@ public class SysUserController extends AbstractController<ISysProvider> {
         Assert.notNull(param, "USER");
         Assert.notNull(param.getId(), "ID");
         Assert.idCard(param.getIdcard());
-        Parameter parameter = new Parameter(getService(), "queryById").setId(param.getId());
-        SysUser user = (SysUser)provider.execute(parameter).getModel();
+        SysUser user = service.queryById(param.getId());
         Assert.notNull(user, "USER", param.getId());
         if(StringUtils.isNotBlank(param.getPassword())) {
             if (!param.getPassword().equals(user.getPassword())) {
@@ -101,7 +94,6 @@ public class SysUserController extends AbstractController<ISysProvider> {
     /**
      * 获取当前在线用户
      * @param modelMap
-     * @param id
      * @return
      */
     @GetMapping("/current")

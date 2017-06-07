@@ -1,4 +1,4 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.Constants;
 import com.loozb.core.base.BaseController;

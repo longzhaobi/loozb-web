@@ -1,7 +1,7 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysOrganService;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(value = "机构管理", description = "机构管理")
 @RequestMapping(value = "/organ")
-public class SysOrganController extends AbstractController<ISysProvider> {
+public class SysOrganController extends AbstractController<SysOrganService> {
 
-    @Override
-    public String getService() {
-        return null;
-    }
 }

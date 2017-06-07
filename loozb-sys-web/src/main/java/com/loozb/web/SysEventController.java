@@ -1,8 +1,8 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
 import com.loozb.core.util.ParamUtil;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysEventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,12 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(value = "日志管理", description = "日志管理")
 @RequestMapping(value = "/logs")
-public class SysEventController extends AbstractController<ISysProvider> {
-
-    @Override
-    public String getService() {
-        return "sysEventService";
-    }
+public class SysEventController extends AbstractController<SysEventService> {
 
     // 查询权限列表
     @ApiOperation(value = "获取日志列表")

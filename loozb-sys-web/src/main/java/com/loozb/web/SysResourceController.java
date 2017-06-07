@@ -1,11 +1,10 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
-import com.loozb.core.base.Parameter;
 import com.loozb.core.support.Assert;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.model.SysResource;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysResourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,12 +26,7 @@ import java.util.Map;
 @RestController
 @Api(value = "资源管理", description = "资源管理")
 @RequestMapping(value = "/resources")
-public class SysResourceController extends AbstractController<ISysProvider> {
-
-    @Override
-    public String getService() {
-        return "sysResourceService";
-    }
+public class SysResourceController extends AbstractController<SysResourceService> {
 
     @ApiOperation(value = "查询资源列表")
     @RequiresPermissions("resource:view")
@@ -70,8 +64,7 @@ public class SysResourceController extends AbstractController<ISysProvider> {
     public Object update(ModelMap modelMap, SysResource param) {
         Assert.notNull(param, "RESOURCE");
         Assert.notNull(param.getId(), "ID");
-        Parameter parameter = new Parameter(getService(), "queryById").setId(param.getId());
-        SysResource user = (SysResource)provider.execute(parameter).getModel();
+        SysResource user = service.queryById(param.getId());
         Assert.notNull(user, "RESOURCE", param.getId());
         return super.update(modelMap, param);
     }
@@ -99,8 +92,7 @@ public class SysResourceController extends AbstractController<ISysProvider> {
         params.put("pid", pid);
         params.put("roleId", roleId);
         params.put("available", "1");
-        Parameter parameter = new Parameter(getService(), "queryResourceByPidAndRoleId").setMap(params);
-        List<?> list = provider.execute(parameter).getList();
+        List<?> list = service.queryResourceByPidAndRoleId(params);
         return setSuccessModelMap(modelMap, list);
     }
 }

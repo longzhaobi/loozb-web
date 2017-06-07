@@ -1,10 +1,10 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.core.util.WebUtil;
 import com.loozb.model.SysUser;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysSessionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,12 +25,7 @@ import java.util.Map;
 @RestController
 @Api(value = "会话管理", description = "会话管理")
 @RequestMapping(value = "/session")
-public class SysSessionController extends AbstractController<ISysProvider> {
-
-    @Override
-    public String getService() {
-        return "sysSessionService";
-    }
+public class SysSessionController extends AbstractController<SysSessionService> {
 
     // 查询会话
     @ApiOperation(value = "查询会话")

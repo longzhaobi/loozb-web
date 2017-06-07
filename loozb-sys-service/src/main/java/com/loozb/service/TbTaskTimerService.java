@@ -2,8 +2,6 @@ package com.loozb.service;
 
 import com.loozb.core.base.BaseService;
 import com.loozb.model.TbTaskTimer;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -13,8 +11,6 @@ import org.springframework.stereotype.Service;
  * @author 龙召碧
  * @since 2017-02-26
  */
-@Service
-@CacheConfig(cacheNames = "TbTaskTimer")
-public class TbTaskTimerService extends BaseService<TbTaskTimer> {
+public interface TbTaskTimerService extends BaseService<TbTaskTimer> {
 	
 }

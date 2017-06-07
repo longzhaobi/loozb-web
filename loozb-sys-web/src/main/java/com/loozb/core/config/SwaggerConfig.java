@@ -1,4 +1,4 @@
-package loozb.core.config;
+package com.loozb.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ public class SwaggerConfig {
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("LOOZB-API").description("©2016 Copyright. Powered By Loozb.")
 				// .termsOfServiceUrl("")
-				.contact(new Contact("loozb", "", "714037058@qq.com")).license("Apache License Version 2.0")
+				.contact(new Contact("com/loozb", "", "714037058@qq.com")).license("Apache License Version 2.0")
 				.licenseUrl("https://github.com/springfox/springfox/blob/master/LICENSE").version("2.0").build();
 	}
 

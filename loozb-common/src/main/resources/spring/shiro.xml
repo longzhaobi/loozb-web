@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 	<!-- Realm实现 -->
-	<bean id="userRealm" class="com.loozb.core.shiro.realm.StatelessRealm" />
+	<bean id="userRealm" class="com.loozb.core.realm.StatelessRealm" />
 
 	<!-- Subject工厂，采用无session模式 -->
 	<bean id="subjectFactory" class="com.loozb.core.shiro.factory.StatelessDefaultSubjectFactory"/>

@@ -1,11 +1,10 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
-import com.loozb.core.base.Parameter;
 import com.loozb.core.support.Assert;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.model.SysRole;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,12 +26,7 @@ import java.util.Map;
 @RestController
 @Api(value = "角色管理", description = "角色管理")
 @RequestMapping(value = "/roles")
-public class SysRoleController extends AbstractController<ISysProvider> {
-
-    @Override
-    public String getService() {
-        return "sysRoleService";
-    }
+public class SysRoleController extends AbstractController<SysRoleService> {
 
     @ApiOperation(value = "查询角色列表，默认查询20条")
     @RequiresPermissions("role:view")
@@ -70,8 +64,7 @@ public class SysRoleController extends AbstractController<ISysProvider> {
     public Object update(ModelMap modelMap, SysRole param) {
         Assert.notNull(param, "ROLE");
         Assert.notNull(param.getId(), "ID");
-        Parameter parameter = new Parameter(getService(), "queryById").setId(param.getId());
-        SysRole user = (SysRole)provider.execute(parameter).getModel();
+        SysRole user = service.queryById(param.getId());
         Assert.notNull(user, "ROLE", param.getId());
         return super.update(modelMap, param);
     }
@@ -94,8 +87,7 @@ public class SysRoleController extends AbstractController<ISysProvider> {
         params.put("roleId", roleId);
         params.put("pid", pid);
         params.put("auths", auths);
-        Parameter parameter = new Parameter(getService(), "doAuth").setMap(params);
-        provider.execute(parameter);
+        service.doAuth(params);
         return setSuccessModelMap(modelMap);
     }
 

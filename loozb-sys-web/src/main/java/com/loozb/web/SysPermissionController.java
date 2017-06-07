@@ -1,11 +1,10 @@
-package loozb.web;
+package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
-import com.loozb.core.base.Parameter;
 import com.loozb.core.support.Assert;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.model.SysPermission;
-import com.loozb.provider.ISysProvider;
+import com.loozb.service.SysPermissionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,13 +26,7 @@ import java.util.Map;
 @RestController
 @Api(value = "权限管理", description = "权限管理")
 @RequestMapping(value = "/permissions")
-public class SysPermissionController extends AbstractController<ISysProvider> {
-
-    @Override
-    public String getService() {
-        return "sysPermissionService";
-    }
-
+public class SysPermissionController extends AbstractController<SysPermissionService> {
 
     // 查询权限列表
     @ApiOperation(value = "查询权限列表，默认查询20条")
@@ -82,8 +75,7 @@ public class SysPermissionController extends AbstractController<ISysProvider> {
     public Object update(ModelMap modelMap, SysPermission param) {
         Assert.notNull(param, "permission");
         Assert.notNull(param.getId(), "ID");
-        Parameter parameter = new Parameter(getService(), "queryById").setId(param.getId());
-        SysPermission permission = (SysPermission)provider.execute(parameter).getModel();
+        SysPermission permission = (SysPermission)service.queryById(param.getId());
         Assert.notNull(permission, "permission", param.getId());
         return super.update(modelMap, param);
     }
@@ -108,8 +100,7 @@ public class SysPermissionController extends AbstractController<ISysProvider> {
     public Object columns(ModelMap modelMap) {
         Map<String, Object> params = ParamUtil.getMap();
         params.put("available", "1");
-        Parameter parameter = new Parameter(getService(), "queryColumns").setMap(params);
-        List<?> list = provider.execute(parameter).getList();
+        List<?> list = service.queryColumns(params);
         return setSuccessModelMap(modelMap, list);
     }
 }
