@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.loozb</groupId>
-		<artifactId>loozb-cms</artifactId>
+		<artifactId>loozb-web</artifactId>
 		<version>1.0</version>
 		<relativePath>./</relativePath>
 	</parent>

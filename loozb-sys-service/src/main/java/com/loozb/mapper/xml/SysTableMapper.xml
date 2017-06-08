@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.com.loozb.mapper.SysTableMapper">
+<mapper namespace="com.loozb.mapper.SysTableMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMapForTable" type="com.SysTable">
+    <resultMap id="BaseResultMapForTable" type="com.loozb.model.SysTable">
         <result column="table_name" property="tableName" />
         <result column="table_comment" property="tableComment" />
     </resultMap>
 
-    <resultMap id="BaseResultMapForColumn" type="com.SysColumn" >
+    <resultMap id="BaseResultMapForColumn" type="com.loozb.model.SysColumn" >
         <result column="column_name" property="columnName" jdbcType="VARCHAR" />
         <result column="table_name" property="tableName" jdbcType="VARCHAR" />
         <result column="column_default" property="columnDefault" jdbcType="VARCHAR" />
