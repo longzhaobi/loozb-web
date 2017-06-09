@@ -131,6 +131,11 @@
             <artifactId>uasparser</artifactId>
             <version>0.6.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.27</version>
+        </dependency>
     </dependencies>
 
 
