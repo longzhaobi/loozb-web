@@ -6,6 +6,7 @@ import com.loozb.core.util.CacheUtil;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.model.*;
 import com.loozb.service.SysRoleService;
+import com.loozb.thread.DoAuthThread;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -60,12 +61,6 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
                 sysRoleResourcePermissionService.delete(ids.get(i));
             }
         }
-        // 3.删除自身权限
-//        List<Long> ids = sysRoleResourcePermissionService.selectIdsByResourceIdAndRoleId(Long.valueOf(pid), Long.valueOf(roleId));
-//        for (int i = 0; i < ids.size(); i++) {
-//            sysRoleResourcePermissionService.del(ids.get(i));
-//        }
-         //4.重新根据传入的信息授权-----------传入的auths格式为：1=3,1=4...，其中等号左边为资源编码，等号右边为权限编码
          //4.1 先根据逗号分割
         if(StringUtils.isNotBlank(auths)) {
             String[] kvs = auths.split("·");
@@ -93,19 +88,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
             }
         }
 
-        //根据角色ID，找到拥有此权限的所有用户，将其清楚权限缓存
-        List<SysAuth> authList = sysAuthService.queryByRoleId(Long.valueOf(roleId));
-        for (SysAuth auth: authList
-             ) {
-            SysUser user = sysUserService.queryById(auth.getUserId());
-            String redisKey = Constants.CACHE_NAMESPACE + Constants.SHIRO_REDIS_CACHE + user.getUsername();
-            String roleCacheKey = "REDIS:ROLE:" + auth.getUserId();
-            String permissionCacheKey = "REDIS:PERMISSION:" + auth.getUserId();
-            String menuCacheKey = "REDIS:MENU:" + auth.getUserId();
-            CacheUtil.getCache().del(roleCacheKey);
-            CacheUtil.getCache().del(permissionCacheKey);
-            CacheUtil.getCache().del(menuCacheKey);
-            CacheUtil.getCache().del(redisKey);
-        }
+        logger.info("-------------启动对角色重新授权线程--------------");
+        new Thread(new DoAuthThread(sysAuthService, sysResourceService, Long.valueOf(roleId))).start();
     }
 }

@@ -149,6 +149,10 @@ public class SysAuthServiceImpl extends BaseServiceImpl<SysAuth> implements SysA
             logger.info("用户授权时，传入的角色为空");
         }
 
+        //清空此用户角色权限信息
+        String roleCacheKey = "REDIS:ROLE:" + userId;
+        CacheUtil.getCache().del(roleCacheKey);
+
     }
 
     /**

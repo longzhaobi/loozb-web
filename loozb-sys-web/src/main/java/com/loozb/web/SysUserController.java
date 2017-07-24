@@ -1,7 +1,9 @@
 package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
+import com.loozb.core.bind.annotation.CurrentUser;
 import com.loozb.core.support.Assert;
+import com.loozb.core.support.HttpCode;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.core.util.PasswordUtil;
 import com.loozb.core.util.WebUtil;
@@ -99,11 +101,50 @@ public class SysUserController extends AbstractController<SysUserService> {
     @GetMapping("/current")
     @ApiOperation(value = "获取当前用户信息")
     @RequiresPermissions("user:view")
-    public Object current(ModelMap modelMap) {
-        Long userId = getCurrUser();
+    public Object current(ModelMap modelMap, @CurrentUser SysUser user) {
+        //获取在线人数
         Integer number = WebUtil.getAllUserNumber();
         modelMap.put("online", number);
-        return super.get(modelMap, userId);
+        return setSuccessModelMap(modelMap, service.initAuth(user.getId()));
+    }
+
+    /**
+     * 验证权限信息
+     * @param modelMap
+     * @return
+     */
+    @GetMapping("/verifyAuth")
+    @ApiOperation(value = "验证当前用户权限")
+    public Object verifyAuth(ModelMap modelMap, String code, @CurrentUser SysUser user) {
+        Boolean bool = service.verifyAuth(code, user.getId());
+        if(bool) {
+            return setModelMap(modelMap, HttpCode.OK);
+        } else {
+            return setModelMap(modelMap, HttpCode.FORBIDDEN);
+        }
+    }
+
+    /**
+     * 修改密码
+     * @param modelMap
+     * @return
+     */
+    @PutMapping("/updatePassword")
+    @ApiOperation(value = "修改密码")
+    public Object updatePassword(ModelMap modelMap, String oldPassword, String newPassword, String confirmPassword, @CurrentUser SysUser user) {
+        return setSuccessModelMap(modelMap, service.updatePassword(oldPassword, newPassword, confirmPassword, user.getId()));
+    }
+
+    /**
+     * 判断用户名是否存在
+     * @param modelMap
+     * @return
+     */
+    @GetMapping("/exist")
+    @ApiOperation(value = "判断用户名是否存在")
+    @RequiresPermissions("user:view")
+    public Object exist(ModelMap modelMap, String value, String code) {
+        return setSuccessModelMap(modelMap, service.exist(value, code));
     }
 
 }

@@ -29,50 +29,48 @@ import ${superControllerClassPackage};
 @RestController
 @RequestMapping("/${table.entityPath}")
 #if(${superControllerClass})
-public class ${table.controllerName} extends${superControllerClass}<${cfg.providerClass}> {
+public class ${table.controllerName} extends ${superControllerClass}<${entity}Service> {
 #else
 public class ${table.controllerName} {
 #end
-public String getService(){
-        return"${table.entityPath}Service";
-        }
 
 @ApiOperation(value = "查询${table.comment}")
-@RequiresPermissions("name:view")
+@RequiresPermissions("${table.entityPath}:view")
 @GetMapping
 public Object query(ModelMap modelMap,
                 @ApiParam(required = false, value = "起始页") @RequestParam(defaultValue = "1", value = "current") String current,
                 @ApiParam(required = false, value = "查询页数") @RequestParam(defaultValue = "20", value = "size") String size,
                 @ApiParam(required = false, value = "需要排序字段") @RequestParam(defaultValue = "id", value = "orderBy") String orderBy,
                 @ApiParam(required = false, value = "查询关键字") @RequestParam(value = "keyword", required = false) String keyword){
-        return super.query(modelMap,param);
+        return super.query(modelMap, ParamUtil.getPageParams(current, size, keyword, orderBy));
         }
 
-@ApiOperation(value = "${table.comment}详情")
-@RequiresPermissions("name:view")
-@GetMapping("/{id}")
-public Object get(ModelMap modelMap, @PathVariable Long id){
-        return super.get(modelMap,id);
+        @ApiOperation(value = "${table.comment}详情")
+        @RequiresPermissions("${table.entityPath}:view")
+        @GetMapping("/{id}")
+        public Object get(ModelMap modelMap, @PathVariable Long id){
+            return super.queryById(modelMap,id);
         }
 
-@PostMapping
-@ApiOperation(value = "新增${table.comment}")
-@RequiresPermissions("name:create")
-public Object update(ModelMap modelMap, ${entity} param){
-        return super.update(modelMap,param);
+        @PostMapping
+        @ApiOperation(value = "新增${table.comment}")
+        @RequiresPermissions("${table.entityPath}:create")
+        public Object create(ModelMap modelMap, ${entity} param){
+            return super.update(modelMap,param);
         }
 
-@PutMapping
-@ApiOperation(value = "修改${table.comment}")
-@RequiresPermissions("name:update")
-public Object update(ModelMap modelMap, ${entity} param){
-        return super.update(modelMap,param);
+        @PutMapping
+        @ApiOperation(value = "修改${table.comment}")
+        @RequiresPermissions("${table.entityPath}:update")
+        public Object update(ModelMap modelMap, ${entity} param){
+            return super.update(modelMap,param);
         }
 
-@DeleteMapping
-@ApiOperation(value = "删除${table.comment}")
-@RequiresPermissions("name:remove")
-public Object delete(ModelMap modelMap, @PathVariable Long id){
-        return super.delete(modelMap,id);
+        @DeleteMapping("/{id}")
+        @ApiOperation(value = "删除${table.comment}")
+        @RequiresPermissions("${table.entityPath}:remove")
+        public Object delete(ModelMap modelMap, @PathVariable Long id){
+            return super.del(modelMap,id);
+
         }
-        }
+}

@@ -30,7 +30,7 @@ public abstract class AbstractController<T extends BaseService> extends BaseCont
         return setSuccessModelMap(modelMap, service.queryList(param));
     }
 
-    public Object get(ModelMap modelMap, Long id) {
+    public Object queryById(ModelMap modelMap, Long id) {
         return setSuccessModelMap(modelMap, service.queryById(id));
     }
 

@@ -1,16 +1,16 @@
 package com.loozb.web;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.loozb.core.Constants;
 import com.loozb.core.base.AbstractController;
 import com.loozb.core.bind.annotation.CurrentUser;
 import com.loozb.core.bind.annotation.Token;
-import com.loozb.core.config.Resources;
-import com.loozb.core.exception.LoginException;
 import com.loozb.core.support.Assert;
 import com.loozb.core.support.HttpCode;
-import com.loozb.core.support.login.LoginHelper;
-import com.loozb.core.util.*;
-import com.loozb.model.SysResource;
+import com.loozb.core.util.CacheUtil;
+import com.loozb.core.util.ParamUtil;
+import com.loozb.core.util.PasswordUtil;
+import com.loozb.core.util.WebUtil;
 import com.loozb.model.SysSession;
 import com.loozb.model.SysUser;
 import com.loozb.model.ext.Authority;
@@ -27,28 +27,29 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 用户登录
  *
- * @author ShenHuaJie
- * @version 2016年5月20日 下午3:11:21
+ * @Author： 龙召碧
+ * @Date: Created in 2017-2-25 20:59
  */
 @RestController
 @Api(value = "登录接口", description = "登录接口")
-public class  LoginController extends AbstractController<SysUserService> {
+public class LoginController extends AbstractController<SysUserService> {
 
     @Autowired
     private SysAuthService sysAuthService;
+
     @Autowired
     private SysResourceService sysResourceService;
 
     @Autowired
     private SysSessionService sysSessionService;
-
-    @Autowired
-    private SysUserService sysUserService;
 
     // 登录
     @ApiOperation(value = "用户登录")
@@ -58,45 +59,33 @@ public class  LoginController extends AbstractController<SysUserService> {
                         @ApiParam(required = true, value = "登录密码") @RequestParam(value = "password") String password) {
         Assert.notNull(account, "ACCOUNT");
         Assert.notNull(password, "PASSWORD");
+        String error = null;
 
         Map<String, Object> params = ParamUtil.getMap();
         params.put("account", account);
-        List<?> list = service.queryList(params);
-        if (list.size() == 1) {
-            SysUser user = (SysUser) list.get(0);
-            if (user == null) {
-                throw new LoginException(Resources.getMessage("LOGIN_FAIL", account));
+        Page<?> pageInfo = service.query(params);
+        if (pageInfo.getRecords().size() == 1) {
+            SysUser user = (SysUser) pageInfo.getRecords().get(0);
+            if(user == null) {
+                error = "用户名或密码错误";
             }
 
-            if ("1".equals(user.getLocked())) {
-                throw new LoginException(Resources.getMessage("ACCOUNT_LOCKED", account));
+            if(user != null && "1".equals(user.getLocked())) {
+                error = "该帐号已被锁定";
+            }
+
+            if(StringUtils.isNotBlank(error)) {
+                throw new IllegalArgumentException(error);
             }
             Long userId = user.getId();
             //判断该用户是否已经登录，如果已经登录，则强制对方下线
             String token = WebUtil.getTokenByUserId(userId);
-            if (StringUtils.isNotBlank(token)) {
+
+            if(StringUtils.isNotBlank(token)) {
                 WebUtil.clear(token, userId);
             }
 
-            if (user.getPassword().equals(PasswordUtil.decryptPassword(password, user.getSalt()))) {
-                //获取角色信息
-                Set<String> roles = (Set<String>) sysAuthService.findRoles(userId);
-
-                //获取权限信息
-                Set<String> permissions = (Set<String>) sysAuthService.findPermissions(userId);
-
-                //获取资源信息
-                List<SysResource> menus = null;
-                String menuCacheKey = "REDIS:MENU:" + userId;
-                String menuCache = (String) CacheUtil.getCache().get(menuCacheKey);
-                if (StringUtils.isNotBlank(menuCache)) {
-                    menus = JsonUtils.jsonToList(menuCache, SysResource.class);
-                } else {
-                    menus = (List<SysResource>) sysResourceService.getMenus(userId);
-                    if (menus != null) {
-                        CacheUtil.getCache().set(menuCacheKey, JsonUtils.objectToJson(menus));
-                    }
-                }
+            if(user.getPassword().equals(PasswordUtil.decryptPassword(password, user.getSalt()))) {
 
                 // 生成token
                 String accessToken = UUID.randomUUID().toString();
@@ -106,10 +95,13 @@ public class  LoginController extends AbstractController<SysUserService> {
                 CacheUtil.getCache().set(Constants.REDIS_SESSION_TOKEN + accessToken, user, 1800);
                 CacheUtil.getCache().set(Constants.REDIS_SESSION_ID + user.getId(), accessToken, 1800);
                 saveSession(account, request, accessToken, user);
-                return setSuccessModelMap(modelMap, new Authority(roles, permissions, menus, user, accessToken));
+                return setSuccessModelMap(modelMap, new Authority(accessToken ,user));
+            } else {
+                throw new IllegalArgumentException("用户名或密码错误");
             }
+        } else {
+            throw new IllegalArgumentException("用户名或密码错误");
         }
-        return setModelMap(modelMap, HttpCode.LOGIN_FAIL, Resources.getMessage("LOGIN_FAIL", account));
     }
 
     private void saveSession(String account, HttpServletRequest request, String accessToken, SysUser user) {
@@ -139,20 +131,6 @@ public class  LoginController extends AbstractController<SysUserService> {
     public Object logout(ModelMap modelMap, HttpServletRequest request, @CurrentUser SysUser user, @Token String token) {
         WebUtil.clear(token, user.getId());
         return setSuccessModelMap(modelMap);
-    }
-
-    // 注册
-    @ApiOperation(value = "用户注册")
-    @PostMapping("/regin")
-    public Object regin(ModelMap modelMap, SysUser sysUser) {
-        Assert.notNull(sysUser.getUsername(), "ACCOUNT");
-        Assert.notNull(sysUser.getPassword(), "PASSWORD");
-        sysUser.setPassword(SecurityUtil.encryptPassword(sysUser.getPassword()));
-        sysUserService.update(sysUser);
-        if (LoginHelper.login(sysUser.getUsername(), sysUser.getPassword())) {
-            return setSuccessModelMap(modelMap);
-        }
-        throw new IllegalArgumentException(Resources.getMessage("LOGIN_FAIL"));
     }
 
     // 没有登录
