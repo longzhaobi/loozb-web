@@ -3,6 +3,9 @@ package com.loozb.model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.loozb.core.base.BaseModel;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 
 /**
  * <p>
@@ -20,10 +23,14 @@ public class SysRole extends BaseModel {
     /**
      * 角色标识
      */
+    @NotNull
+	@Size(min=2, max = 10, message="[角色标识个数必须在2到10位]")
 	private String role;
     /**
      * 角色名称
      */
+	@NotNull
+	@Size(min=2, max = 10, message="[角色名称个数必须在2到10位]")
 	private String name;
     /**
      * 角色描述

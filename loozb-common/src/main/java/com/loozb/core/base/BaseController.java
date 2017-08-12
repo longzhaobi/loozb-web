@@ -3,30 +3,33 @@
  */
 package com.loozb.core.base;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.loozb.core.Constants;
 import com.loozb.core.exception.BaseException;
 import com.loozb.core.exception.IllegalParameterException;
 import com.loozb.core.support.HttpCode;
+import com.loozb.core.thread.DoSaveErrorInfoThread;
 import com.loozb.core.util.InstanceUtil;
 import com.loozb.core.util.WebUtil;
+import com.loozb.model.SysUser;
+import com.loozb.service.ErrorInfoService;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.baomidou.mybatisplus.plugins.Page;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 控制器基类
@@ -36,6 +39,8 @@ import com.baomidou.mybatisplus.plugins.Page;
  */
 public abstract class BaseController {
 	protected final Logger logger = LogManager.getLogger(this.getClass());
+	@Autowired
+	ErrorInfoService errorInfoService;
 
 	/** 获取当前用户Id */
 	protected Long getCurrUser() {
@@ -92,27 +97,39 @@ public abstract class BaseController {
 		return ResponseEntity.ok(modelMap);
 	}
 
-	/** 异常处理 */
+	/** 异常处理，所有的异常都会调用这里,并写入日志 */
 	@ExceptionHandler(Exception.class)
 	public void exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception ex)
 			throws Exception {
 		logger.error(Constants.Exception_Head, ex);
+		Integer httpCode = 400;
 		ModelMap modelMap = new ModelMap();
 		if (ex instanceof BaseException) {
 			((BaseException) ex).handler(modelMap);
 		} else if (ex instanceof IllegalArgumentException) {
 			new IllegalParameterException(ex.getMessage()).handler(modelMap);
 		} else if (ex instanceof UnauthorizedException) {
-			modelMap.put("httpCode", HttpCode.FORBIDDEN.value());
+			httpCode = HttpCode.FORBIDDEN.value();
+			modelMap.put("httpCode", httpCode);
 			modelMap.put("msg", StringUtils.defaultIfBlank(ex.getMessage(), HttpCode.FORBIDDEN.msg()));
 		} else {
-			modelMap.put("httpCode", HttpCode.INTERNAL_SERVER_ERROR.value());
+			httpCode = HttpCode.INTERNAL_SERVER_ERROR.value();
+			modelMap.put("httpCode", httpCode);
 			String msg = StringUtils.defaultIfBlank(ex.getMessage(), HttpCode.INTERNAL_SERVER_ERROR.msg());
 			modelMap.put("msg", msg.length() > 100 ? "系统走神了,请稍候再试." : msg);
 		}
 		response.setContentType("application/json;charset=UTF-8");
 		modelMap.put("timestamp", System.currentTimeMillis());
 		logger.info(JSON.toJSON(modelMap));
+		//开辟现场保存错误信息
+		SysUser user = WebUtil.getCurrentUser(request);
+		String method = request.getMethod();
+		String uri = request.getRequestURI();
+		String ip = WebUtil.getHost(request);
+		String agent = request.getHeader("user-agent");
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+		modelMap.put("uuid", uuid);
+		new Thread(new DoSaveErrorInfoThread(errorInfoService, user, ex, httpCode.toString(), method, uri, agent, ip, uuid)).start();
 		byte[] bytes = JSON.toJSONBytes(modelMap, SerializerFeature.DisableCircularReferenceDetect);
 		response.getOutputStream().write(bytes);
 	}

@@ -1,15 +1,7 @@
 package com.loozb;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.generator.AutoGenerator;
-import com.baomidou.mybatisplus.generator.InjectionConfig;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
@@ -22,7 +14,6 @@ public class Generator {
 	/**
 	 * 测试 run 执行 注意：不生成service接口 注意：不生成service接口 注意：不生成service接口
 	 * <p>
-	 * 配置方法查看 {@link ConfigGenerator}
 	 * </p>
 	 */
 	public static void main(String[] args) {
@@ -40,7 +31,8 @@ public class Generator {
 		// 自定义文件命名，注意 %s 会自动填充表实体属性！
 		// gc.setMapperName("%sDao");
 		// gc.setXmlName("%sDao");
-		gc.setServiceImplName("%sService");
+		gc.setServiceName("%sService");
+		gc.setServiceImplName("%sServiceImpl");
 		// gc.setServiceImplName("%sServiceDiy");
 		// gc.setControllerName("%sAction");
 		mpg.setGlobalConfig(gc);
@@ -54,9 +46,10 @@ public class Generator {
 		mpg.setDataSource(dsc);
 		// 策略配置
 		StrategyConfig strategy = new StrategyConfig();
-		// strategy.setTablePrefix("sys_");// 此处可以修改为您的表前缀
+		String[] prefix = {"sys"};
+		 strategy.setTablePrefix(prefix);// 此处可以修改为您的表前缀
 		strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
-		strategy.setInclude(new String[] { "sys_event" }); // 需要生成的表
+		strategy.setInclude(new String[] { "sys_error_info" }); // 需要生成的表
 		// strategy.setExclude(new String[]{"test"}); // 排除生成的表
 		// 自定义实体父类
 		strategy.setSuperEntityClass("com.loozb.core.base.BaseModel");
@@ -66,9 +59,9 @@ public class Generator {
 		// 自定义 mapper 父类
 		strategy.setSuperMapperClass("com.loozb.core.base.BaseMapper");
 		// 自定义 service 父类
-		strategy.setSuperServiceImplClass("com.loozb.core.base.BaseService");
+		strategy.setSuperServiceClass("com.loozb.core.base.BaseService");
 		// 自定义 service 实现类父类
-		// strategy.setSuperServiceImplClass("org.ibase4j.core.base.BaseService");
+		 strategy.setSuperServiceImplClass("com.loozb.core.base.BaseServiceImpl");
 		// 自定义 controller 父类
 		strategy.setSuperControllerClass("com.loozb.core.base.AbstractController");
 		// 【实体】是否生成字段常量（默认 false）
@@ -84,19 +77,19 @@ public class Generator {
 		pc.setEntity("model");
 		pc.setMapper("mapper");
 		pc.setXml("mapper.xml");
-		pc.setServiceImpl("ignore");
+		pc.setServiceImpl("service.impl");
 		pc.setService("service");
 		pc.setController("web");
 		mpg.setPackageInfo(pc);
 		// 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值
-		InjectionConfig cfg = new InjectionConfig() {
-			public void initMap() {
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("providerClass", "ISysProvider");
-				this.setMap(map);
-			}
-		};
-		mpg.setCfg(cfg);
+//		InjectionConfig cfg = new InjectionConfig() {
+//			public void initMap() {
+//				Map<String, Object> map = new HashMap<String, Object>();
+//				map.put("providerClass", "ISysProvider");
+//				this.setMap(map);
+//			}
+//		};
+//		mpg.setCfg(cfg);
 		// 自定义模板配置，可以 copy 源码 mybatis-plus/src/main/resources/template 下面内容修改，
 		// 放置自己项目的 src/main/resources/template 目录下, 默认名称一下可以不配置，也可以自定义模板名称
 		TemplateConfig tc = new TemplateConfig();

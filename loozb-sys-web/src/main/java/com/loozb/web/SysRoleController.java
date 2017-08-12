@@ -1,5 +1,6 @@
 package com.loozb.web;
 
+import com.loozb.core.bind.annotation.ValidError;
 import com.loozb.core.base.AbstractController;
 import com.loozb.core.support.Assert;
 import com.loozb.core.util.ParamUtil;
@@ -10,8 +11,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,9 +49,10 @@ public class SysRoleController extends AbstractController<SysRoleService> {
      * @return
      */
     @PostMapping
+    @ValidError
     @ApiOperation(value = "创建角色信息")
     @RequiresPermissions("role:create")
-    public Object create(ModelMap modelMap, SysRole param) {
+    public Object create(ModelMap modelMap, @Valid SysRole param, Errors errors) {
         return super.update(modelMap, param);
     }
 
