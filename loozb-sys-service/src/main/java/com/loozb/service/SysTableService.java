@@ -1,14 +1,8 @@
 package com.loozb.service;
 
-import com.loozb.mapper.SysTableMapper;
-import com.loozb.model.SysColumn;
 import com.loozb.model.SysTable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -18,20 +12,13 @@ import java.util.Map;
  * @author 龙召碧
  * @since 2017-02-25
  */
-@Service
-@CacheConfig(cacheNames = "SysTable")
-public class SysTableService {
+public interface SysTableService {
 
-    @Autowired(required = false)
-    private SysTableMapper sysTableMapper;
-
-    public List<SysTable> selectTable(Map<String, Object> params) {
-        return sysTableMapper.selectTable(params);
-    }
-
-    public List<SysColumn> selectColumns(Map<String, Object> params) {
-        return sysTableMapper.selectColumns(params);
-    }
-
+    /**
+     * 根据表明获取表字段和注释
+     * @param tableName
+     * @return
+     */
+    List<SysTable> selectTableByName(String tableName);
 
 }

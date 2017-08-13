@@ -54,7 +54,7 @@
 				/app/**=anon
 				/anon/**=anon
 				/index.jsp=anon
-				/regin=anon
+				/register=anon
 				/login=anon
 				/*.ico=anon
 				/upload/*=anon

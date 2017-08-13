@@ -1,6 +1,7 @@
 package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
+import com.loozb.core.bind.annotation.Modify;
 import com.loozb.core.support.Assert;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.model.SysPermission;
@@ -72,6 +73,7 @@ public class SysPermissionController extends AbstractController<SysPermissionSer
     @PutMapping
     @ApiOperation(value = "更新权限信息")
     @RequiresPermissions("permission:update")
+    @Modify
     public Object update(ModelMap modelMap, SysPermission param) {
         Assert.notNull(param, "permission");
         Assert.notNull(param.getId(), "ID");

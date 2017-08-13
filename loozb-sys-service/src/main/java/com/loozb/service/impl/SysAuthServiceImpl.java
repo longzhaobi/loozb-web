@@ -127,6 +127,10 @@ public class SysAuthServiceImpl extends BaseServiceImpl<SysAuth> implements SysA
         return permissionSet;
     }
 
+    /**
+     * 给用户授权
+     * @param params
+     */
     public void allot(Map<String, Object> params) {
         Long userId = (Long) params.get("id");
         String roleIds = (String) params.get("roleIds");

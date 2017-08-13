@@ -2,6 +2,7 @@ package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
 import com.loozb.core.bind.annotation.CurrentUser;
+import com.loozb.core.bind.annotation.Modify;
 import com.loozb.core.support.Assert;
 import com.loozb.core.support.HttpCode;
 import com.loozb.core.util.ParamUtil;
@@ -52,7 +53,9 @@ public class SysUserController extends AbstractController<SysUserService> {
     @ApiOperation(value = "创建用户信息")
     @RequiresPermissions("user:create")
     public Object create(ModelMap modelMap, SysUser param) {
-        Assert.idCard(param.getIdcard());
+        if(StringUtils.isNotBlank(param.getIdcard())) {
+            Assert.idCard(param.getIdcard());
+        }
         PasswordUtil.encryptPassword(param);
         return super.update(modelMap, param);
     }
@@ -66,10 +69,13 @@ public class SysUserController extends AbstractController<SysUserService> {
     @PutMapping
     @ApiOperation(value = "更新用户信息")
     @RequiresPermissions("user:update")
+    @Modify
     public Object update(ModelMap modelMap, SysUser param) {
         Assert.notNull(param, "USER");
         Assert.notNull(param.getId(), "ID");
-        Assert.idCard(param.getIdcard());
+        if(StringUtils.isNotBlank(param.getIdcard())) {
+            Assert.idCard(param.getIdcard());
+        }
         SysUser user = service.queryById(param.getId());
         Assert.notNull(user, "USER", param.getId());
         if(StringUtils.isNotBlank(param.getPassword())) {
@@ -100,7 +106,6 @@ public class SysUserController extends AbstractController<SysUserService> {
      */
     @GetMapping("/current")
     @ApiOperation(value = "获取当前用户信息")
-    @RequiresPermissions("user:view")
     public Object current(ModelMap modelMap, @CurrentUser SysUser user) {
         //获取在线人数
         Integer number = WebUtil.getAllUserNumber();
@@ -142,7 +147,6 @@ public class SysUserController extends AbstractController<SysUserService> {
      */
     @GetMapping("/exist")
     @ApiOperation(value = "判断用户名是否存在")
-    @RequiresPermissions("user:view")
     public Object exist(ModelMap modelMap, String value, String code) {
         return setSuccessModelMap(modelMap, service.exist(value, code));
     }

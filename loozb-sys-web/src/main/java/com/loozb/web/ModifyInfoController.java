@@ -2,8 +2,8 @@ package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
 import com.loozb.core.util.ParamUtil;
-import com.loozb.model.ErrorInfo;
-import com.loozb.service.ErrorInfoService;
+import com.loozb.model.ModifyInfo;
+import com.loozb.service.ModifyInfoService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 2017-08-13
  */
 @RestController
-@RequestMapping("/errorInfos")
-public class ErrorInfoController extends AbstractController<ErrorInfoService> {
+@RequestMapping("/modifyInfos")
+public class ModifyInfoController extends AbstractController<ModifyInfoService> {
 
     @ApiOperation(value = "查询用户角色信息表")
-    @RequiresPermissions("errorInfo:view")
+    @RequiresPermissions("modifyInfo:view")
     @GetMapping
     public Object query(ModelMap modelMap,
                         @ApiParam(required = false, value = "起始页") @RequestParam(defaultValue = "1", value = "current") String current,
@@ -34,7 +34,7 @@ public class ErrorInfoController extends AbstractController<ErrorInfoService> {
     }
 
     @ApiOperation(value = "用户角色信息表详情")
-    @RequiresPermissions("errorInfo:view")
+    @RequiresPermissions("modifyInfo:view")
     @GetMapping("/{id}")
     public Object get(ModelMap modelMap, @PathVariable Long id) {
         return super.queryById(modelMap, id);
@@ -42,21 +42,21 @@ public class ErrorInfoController extends AbstractController<ErrorInfoService> {
 
     @PostMapping
     @ApiOperation(value = "新增用户角色信息表")
-    @RequiresPermissions("errorInfo:create")
-    public Object create(ModelMap modelMap, ErrorInfo param) {
+    @RequiresPermissions("modifyInfo:create")
+    public Object create(ModelMap modelMap, ModifyInfo param) {
         return super.update(modelMap, param);
     }
 
     @PutMapping
     @ApiOperation(value = "修改用户角色信息表")
-    @RequiresPermissions("errorInfo:update")
-    public Object update(ModelMap modelMap, ErrorInfo param) {
+    @RequiresPermissions("modifyInfo:update")
+    public Object update(ModelMap modelMap, ModifyInfo param) {
         return super.update(modelMap, param);
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除用户角色信息表")
-    @RequiresPermissions("errorInfo:remove")
+    @RequiresPermissions("modifyInfo:remove")
     public Object delete(ModelMap modelMap, @PathVariable Long id) {
         return super.del(modelMap, id);
 

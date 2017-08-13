@@ -36,6 +36,7 @@
 #end
 				)
 			</if>
+			and available='1'
 		</where>
 	</select>
 </mapper>

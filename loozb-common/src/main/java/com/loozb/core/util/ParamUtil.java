@@ -25,4 +25,7 @@ public class ParamUtil {
         param.put("available", "1");
         return param;
     }
+    public static Map<String,Object> getEmptyMap() {
+        return new HashMap<>();
+    }
 }

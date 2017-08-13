@@ -188,7 +188,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
         List<SysResource> menus = null;
         String menuCacheKey = "REDIS:MENU:" + userId;
         String menuCache = (String) CacheUtil.getCache().get(menuCacheKey);
-        if (StringUtils.isNotBlank(menuCache)) {
+        if (StringUtils.isNotBlank(menuCache) && !menuCache.equals("[]")) {
             menus = JsonUtils.jsonToList(menuCache, SysResource.class);
         } else {
             //获取资源信息

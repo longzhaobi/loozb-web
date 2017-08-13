@@ -49,7 +49,7 @@ public class Generator {
 		String[] prefix = {"sys"};
 		 strategy.setTablePrefix(prefix);// 此处可以修改为您的表前缀
 		strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
-		strategy.setInclude(new String[] { "sys_error_info" }); // 需要生成的表
+		strategy.setInclude(new String[] { "sys_modify_info" }); // 需要生成的表
 		// strategy.setExclude(new String[]{"test"}); // 排除生成的表
 		// 自定义实体父类
 		strategy.setSuperEntityClass("com.loozb.core.base.BaseModel");
@@ -97,6 +97,7 @@ public class Generator {
 		tc.setMapper("tpl/mapper.java.vm");
 		tc.setXml("tpl/mapper.xml.vm");
 		tc.setService("tpl/service.java.vm");
+		tc.setServiceImpl("tpl/serviceImpl.java.vm");
 		tc.setController("tpl/controller.java.vm");
 		mpg.setTemplate(tc);
 		// 执行生成

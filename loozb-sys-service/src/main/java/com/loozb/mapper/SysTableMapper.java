@@ -16,7 +16,7 @@ import java.util.Map;
  * @since 2017-02-25
  */
 public interface SysTableMapper {
-    List<SysTable> selectTable(@Param("cm") Map<String, Object> params);
+    List<SysTable> selectTableByName(@Param("cm") Map<String, Object> params);
 
     List<SysColumn> selectColumns(@Param("cm") Map<String, Object> params);
 }

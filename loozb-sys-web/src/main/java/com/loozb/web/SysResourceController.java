@@ -1,6 +1,7 @@
 package com.loozb.web;
 
 import com.loozb.core.base.AbstractController;
+import com.loozb.core.bind.annotation.Modify;
 import com.loozb.core.support.Assert;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.model.SysResource;
@@ -61,6 +62,7 @@ public class SysResourceController extends AbstractController<SysResourceService
     @PutMapping
     @ApiOperation(value = "更新资源信息")
     @RequiresPermissions("resource:update")
+    @Modify
     public Object update(ModelMap modelMap, SysResource param) {
         Assert.notNull(param, "RESOURCE");
         Assert.notNull(param.getId(), "ID");

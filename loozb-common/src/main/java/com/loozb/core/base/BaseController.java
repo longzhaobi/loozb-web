@@ -15,6 +15,9 @@ import com.loozb.core.util.InstanceUtil;
 import com.loozb.core.util.WebUtil;
 import com.loozb.model.SysUser;
 import com.loozb.service.ErrorInfoService;
+import cz.mallat.uasparser.OnlineUpdater;
+import cz.mallat.uasparser.UASparser;
+import cz.mallat.uasparser.UserAgentInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -122,14 +126,23 @@ public abstract class BaseController {
 		modelMap.put("timestamp", System.currentTimeMillis());
 		logger.info(JSON.toJSON(modelMap));
 		//开辟现场保存错误信息
+
+		UASparser uasParser = new UASparser(OnlineUpdater.getVendoredInputStream());
+		String userAgent = null;
+		try {
+			UserAgentInfo userAgentInfo = uasParser.parse(request.getHeader("user-agent"));
+			userAgent = userAgentInfo.getOsName() + " " + userAgentInfo.getType() + " " + userAgentInfo.getUaName();
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+
 		SysUser user = WebUtil.getCurrentUser(request);
 		String method = request.getMethod();
 		String uri = request.getRequestURI();
 		String ip = WebUtil.getHost(request);
-		String agent = request.getHeader("user-agent");
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		modelMap.put("uuid", uuid);
-		new Thread(new DoSaveErrorInfoThread(errorInfoService, user, ex, httpCode.toString(), method, uri, agent, ip, uuid)).start();
+		new Thread(new DoSaveErrorInfoThread(errorInfoService, user, ex, httpCode.toString(), method, uri, userAgent, ip, uuid)).start();
 		byte[] bytes = JSON.toJSONBytes(modelMap, SerializerFeature.DisableCircularReferenceDetect);
 		response.getOutputStream().write(bytes);
 	}

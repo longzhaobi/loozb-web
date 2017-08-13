@@ -5,17 +5,18 @@ import com.loozb.core.Constants;
 import com.loozb.core.base.AbstractController;
 import com.loozb.core.bind.annotation.CurrentUser;
 import com.loozb.core.bind.annotation.Token;
+import com.loozb.core.exception.IllegalParameterException;
 import com.loozb.core.support.Assert;
 import com.loozb.core.support.HttpCode;
 import com.loozb.core.util.CacheUtil;
 import com.loozb.core.util.ParamUtil;
 import com.loozb.core.util.PasswordUtil;
 import com.loozb.core.util.WebUtil;
+import com.loozb.model.SysAuth;
 import com.loozb.model.SysSession;
 import com.loozb.model.SysUser;
 import com.loozb.model.ext.Authority;
 import com.loozb.service.SysAuthService;
-import com.loozb.service.SysResourceService;
 import com.loozb.service.SysSessionService;
 import com.loozb.service.SysUserService;
 import io.swagger.annotations.Api;
@@ -44,9 +45,6 @@ public class LoginController extends AbstractController<SysUserService> {
 
     @Autowired
     private SysAuthService sysAuthService;
-
-    @Autowired
-    private SysResourceService sysResourceService;
 
     @Autowired
     private SysSessionService sysSessionService;
@@ -102,6 +100,34 @@ public class LoginController extends AbstractController<SysUserService> {
         } else {
             throw new IllegalArgumentException("用户名或密码错误");
         }
+    }
+
+    /**
+     * 创建创建用户
+     * @param modelMap
+     * @param param
+     * @return
+     */
+    @PostMapping("/register")
+    @ApiOperation(value = "注册用户信息")
+    public Object register(ModelMap modelMap, SysUser param) {
+        Map<String, Object> params = ParamUtil.getMap();
+        params.put("account", param.getUsername());
+        List<SysUser> users = service.queryList(params);
+        if(users != null && users.size() > 0) {
+            throw new IllegalParameterException("用户名【"+ param.getUsername() +"】已经存在");
+        }
+        if(StringUtils.isNotBlank(param.getIdcard())) {
+            Assert.idCard(param.getIdcard());
+        }
+        PasswordUtil.encryptPassword(param);
+        SysUser user = service.update(param);
+        SysAuth sa = new SysAuth();
+        sa.setUserId(user.getId());
+        sa.setRoleId(896714694725406722L);
+        //分配权限信息
+        sysAuthService.update(sa);
+        return setSuccessModelMap(modelMap, user);
     }
 
     private void saveSession(String account, HttpServletRequest request, String accessToken, SysUser user) {

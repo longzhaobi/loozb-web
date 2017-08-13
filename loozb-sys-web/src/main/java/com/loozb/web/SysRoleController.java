@@ -1,5 +1,6 @@
 package com.loozb.web;
 
+import com.loozb.core.bind.annotation.Modify;
 import com.loozb.core.bind.annotation.ValidError;
 import com.loozb.core.base.AbstractController;
 import com.loozb.core.support.Assert;
@@ -65,6 +66,7 @@ public class SysRoleController extends AbstractController<SysRoleService> {
     @PutMapping
     @ApiOperation(value = "更新角色信息")
     @RequiresPermissions("role:update")
+    @Modify
     public Object update(ModelMap modelMap, SysRole param) {
         Assert.notNull(param, "ROLE");
         Assert.notNull(param.getId(), "ID");

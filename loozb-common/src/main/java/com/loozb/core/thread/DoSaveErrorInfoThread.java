@@ -3,8 +3,6 @@ package com.loozb.core.thread;
 import com.loozb.model.ErrorInfo;
 import com.loozb.model.SysUser;
 import com.loozb.service.ErrorInfoService;
-import cz.mallat.uasparser.OnlineUpdater;
-import cz.mallat.uasparser.UASparser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,18 +40,16 @@ public class DoSaveErrorInfoThread implements Runnable {
     public void run() {
         logger.info("保存错误信息");
         try {
-
-            UASparser uasParser = new UASparser(OnlineUpdater.getVendoredInputStream());
             ErrorInfo ei = new ErrorInfo();
             ei.setUrl(uri);
             ei.setCreateId(0L);
-            ei.setName(user.getUsername());
+            ei.setName(user == null ? "游客":user.getUsername());
             ei.setAgent(agent);
             ei.setIp(ip);
             ei.setException(ex.getMessage() == null ? "未捕获到异常信息" : ex.getMessage().length() > 3000 ? ex.getMessage().substring(0, 3000) : ex.getMessage().replace("<br />", "，"));
             ei.setMethod(method);
             ei.setStatus(httpCode);
-            ei.setUserId(user.getId());
+            ei.setUserId(user == null ? 0L : user.getId());
             ei.setUuid(uuid);
             ei.setInstance(ex.getClass().getName());
 

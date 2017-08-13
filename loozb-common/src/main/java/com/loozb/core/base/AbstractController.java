@@ -40,8 +40,8 @@ public abstract class AbstractController<T extends BaseService> extends BaseCont
             param.setCreateId(userId);
             param.setCtime(new Date());
         }
-        service.update(param);
-        return setSuccessModelMap(modelMap);
+        Object o = service.update(param);
+        return setSuccessModelMap(modelMap, o);
     }
 
     public Object delete(ModelMap modelMap, Long id) {
