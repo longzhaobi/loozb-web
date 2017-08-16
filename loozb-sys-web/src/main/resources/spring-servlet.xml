@@ -56,7 +56,7 @@
 			<mvc:exclude-mapping path="/configuration/**" />
 			<bean class="com.loozb.core.interceptor.MaliciousRequestInterceptor">
 				<property name="minRequestIntervalTime" value="500" />
-				<property name="maxMaliciousTimes" value="0" />
+				<property name="maxMaliciousTimes" value="5" />
 				<property name="nextInterceptor">
 					<array>
 						<!--<bean class="com.loozb.core.interceptor.LocaleInterceptor" />-->
