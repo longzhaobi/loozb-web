@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.loozb.core.Constants;
 import com.loozb.core.base.BaseModel;
 import com.loozb.core.util.CacheUtil;
+import com.loozb.core.util.DateUtil;
+import com.loozb.core.util.ExceptionUtil;
 import com.loozb.core.util.WebUtil;
 import com.loozb.model.ModifyInfo;
 import com.loozb.model.SysTable;
@@ -27,6 +29,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 切面编程，识别所有注解@Modify的目标方法
@@ -40,6 +44,8 @@ import java.util.*;
 @Component
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ModifyAspect {
+
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     @Autowired
     private SysTableService tableService;
@@ -190,11 +196,15 @@ public class ModifyAspect {
                         mi.setName(user.getUsername());
                         mi.setContent(content.toString());
 
-                        try {
-                            modifyInfoService.update(mi);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        executorService.submit(new Runnable() {
+                            public void run() {
+                                try { // 保存操作
+                                    modifyInfoService.update(mi);
+                                } catch (Exception e) {
+                                    logger.error("Save modify log cause error :", e);
+                                }
+                            }
+                        });
                     }
                 }
             }

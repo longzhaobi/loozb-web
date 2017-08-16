@@ -36,7 +36,7 @@ public abstract class AbstractController<T extends BaseService> extends BaseCont
 
     public Object update(ModelMap modelMap, BaseModel param) {
         Long userId = getCurrUser();
-        if (param.getId() == null) {
+        if (param.getId() == null && param.getCreateId() == null) {
             param.setCreateId(userId);
             param.setCtime(new Date());
         }

@@ -15,7 +15,7 @@ public interface Constants {
      * 异常信息统一头信息<br>
      * 非常遗憾的通知您,程序发生了异常
      */
-    public static final String Exception_Head = "OH,MY GOD! SOME ERRORS OCCURED! AS FOLLOWS :";
+    public static final String Exception_Head = "噢,我的天! 某些错误发生! 如下 :";
     /** 缓存键值 */
     public static final Map<Class<?>, String> cacheKeyMap = InstanceUtil.newHashMap();
     /** 操作名称 */
@@ -45,12 +45,12 @@ public interface Constants {
     /** TOKEN */
     public static final String TOKEN = "token";
     /** permissioin_role**/
-    public static final String SHIRO_REDIS_CACHE = "SHIRO_REDIS_CACHE:";
+    public static final String SHIRO_REDIS_CACHE = CACHE_NAMESPACE + "SHIRO_REDIS_CACHE:";
     public static final String IMAGE_SERVER_BASE_URL = "http://images.loozb.com/";
     //保存用户登录记录
-    public static final String REDIS_SESSION_ID = "REDIS:SESSION:ID:";
+    public static final String REDIS_SESSION_ID = CACHE_NAMESPACE + "REDIS:SESSION:ID:";
     //保存用户登录记录
-    public static final String REDIS_SESSION_TOKEN = "REDIS:SESSION:TOKEN:";
+    public static final String REDIS_SESSION_TOKEN = CACHE_NAMESPACE + "REDIS:SESSION:TOKEN:";
     /** 日志表状态 */
     public interface JOBSTATE {
         /**
