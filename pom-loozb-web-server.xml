@@ -15,8 +15,8 @@
 	<!-- clean package -P build tomcat7:run-war-only -f pom-sys-web-server.xml -->
 	<modules>
 		<module>loozb-common</module>
-		<module>loozb-sys-model</module>
-		<module>loozb-sys-service</module>
-		<module>loozb-sys-web</module>
+		<module>loozb-model</module>
+		<module>loozb-service</module>
+		<module>loozb-api</module>
 	</modules>
 </project>

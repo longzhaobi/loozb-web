@@ -6,13 +6,13 @@
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>loozb-sys-web</artifactId>
+    <artifactId>loozb-api</artifactId>
     <packaging>war</packaging>
-    <name>loozb-sys-web</name>
+    <name>loozb-api</name>
     <url>http://maven.apache.org</url>
 
     <build>
-        <finalName>loozb-sys-web</finalName>
+        <finalName>loozb-api</finalName>
     </build>
 
     <properties>
@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>com.loozb</groupId>
-            <artifactId>loozb-sys-model</artifactId>
+            <artifactId>loozb-model</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>com.loozb</groupId>
-            <artifactId>loozb-sys-service</artifactId>
+            <artifactId>loozb-service</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
