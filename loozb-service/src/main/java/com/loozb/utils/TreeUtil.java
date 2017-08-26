@@ -1,7 +1,7 @@
 package com.loozb.utils;
 
 import org.apache.commons.collections.CollectionUtils;
-import com.loozb.model.SysResource;
+import com.loozb.model.sys.SysResource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;

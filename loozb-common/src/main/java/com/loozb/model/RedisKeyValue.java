@@ -12,6 +12,13 @@ public class RedisKeyValue {
 	private String value;
 	
 	private String name;
+
+	public RedisKeyValue() {}
+
+	public RedisKeyValue(String key, String value) {
+		this.key = key;
+		this.value = value;
+	}
 	
 	public RedisKeyValue(String key, String value, String name) {
 		this.key = key;

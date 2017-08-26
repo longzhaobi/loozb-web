@@ -27,13 +27,12 @@ public interface Constants {
     /** 当前用户 */
     public static final String CURRENT_USER = "user";
     /** 当前TOKEN */
-    public static final String CURRENT_TOKEN = "token";
+    public static final String CURRENT_TOKEN = "loozb_token";
+    public static final String TOKEN = "loozb_token";
     /** 上次请求地址 */
     public static final String PREREQUEST = "PREREQUEST";
     /** 上次请求时间 */
     public static final String PREREQUEST_TIME = "PREREQUEST_TIME";
-    /** 登录地址 */
-    public static final String LOGIN_URL = "/login.html";
     /** 非法请求次数 */
     public static final String MALICIOUS_REQUEST_TIMES = "MALICIOUS_REQUEST_TIMES";
     /** 缓存命名空间 */
@@ -42,15 +41,13 @@ public interface Constants {
     public static final String ALLUSER_NUMBER = "SYSTEM:" + CACHE_NAMESPACE + "ALLUSER_NUMBER";
     /** TOKEN */
     public static final String TOKEN_KEY = CACHE_NAMESPACE + "TOKEN_KEY";
-    /** TOKEN */
-    public static final String TOKEN = "token";
     /** permissioin_role**/
     public static final String SHIRO_REDIS_CACHE = CACHE_NAMESPACE + "SHIRO_REDIS_CACHE:";
     public static final String IMAGE_SERVER_BASE_URL = "http://images.loozb.com/";
     //保存用户登录记录
-    public static final String REDIS_SESSION_ID = CACHE_NAMESPACE + "REDIS:SESSION:ID:";
+    public static final String REDIS_SESSION_ID = "REDIS:SESSION:ID:";
     //保存用户登录记录
-    public static final String REDIS_SESSION_TOKEN = CACHE_NAMESPACE + "REDIS:SESSION:TOKEN:";
+    public static final String REDIS_SESSION_TOKEN = "REDIS:SESSION:TOKEN:";
     /** 日志表状态 */
     public interface JOBSTATE {
         /**

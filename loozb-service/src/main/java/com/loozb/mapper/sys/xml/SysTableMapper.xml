@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loozb.mapper.sys.SysTableMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMapForTable" type="com.loozb.model.sys.SysTable">
+        <result column="ordial_position" property="ordialPosition" jdbcType="VARCHAR" />
+        <result column="column_name" property="columnName" jdbcType="VARCHAR" />
+        <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+        <result column="column_default" property="columnDefault" jdbcType="VARCHAR" />
+        <result column="is_nullable" property="isNullable" jdbcType="VARCHAR" />
+        <result column="column_type" property="columnType" jdbcType="VARCHAR" />
+        <result column="COLUMN_KEY" property="columnKey" jdbcType="VARCHAR" />
+        <result column="extra" property="extra" jdbcType="VARCHAR" />
+        <result column="nums" property="nums" jdbcType="INTEGER" />
+        <result column="column_comment" property="columnComment" jdbcType="VARCHAR" />
+        <result column="table_comment" property="tableComment" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapForColumn" type="com.loozb.model.sys.SysColumn" >
+        <result column="column_name" property="columnName" jdbcType="VARCHAR" />
+        <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+        <result column="column_default" property="columnDefault" jdbcType="VARCHAR" />
+        <result column="is_nullable" property="isNullable" jdbcType="VARCHAR" />
+        <result column="column_type" property="columnType" jdbcType="VARCHAR" />
+        <result column="COLUMN_KEY" property="columnKey" jdbcType="VARCHAR" />
+        <result column="column_comment" property="columnComment" jdbcType="VARCHAR" />
+    </resultMap>
+    <!-- 查询列表-->
+    <select id="selectTableByName" resultMap="BaseResultMapForTable">
+    <![CDATA[
+    SELECT
+		T1.ORDINAL_POSITION,
+		T1.COLUMN_NAME,
+		T1.TABLE_NAME,
+		T1.COLUMN_DEFAULT,
+		T1.IS_NULLABLE,
+		T1.COLUMN_TYPE,
+		T1.COLUMN_KEY,
+		T1.EXTRA,
+		T1.COLUMN_COMMENT,
+		(SELECT table_comment FROM information_schema.TABLES WHERE TABLE_NAME = t1.table_name and TABLE_SCHEMA='loozb') as table_comment
+	FROM
+		information_schema. COLUMNS T1
+	WHERE
+		table_schema = 'loozb' and table_name = #{cm.keyword,jdbcType=VARCHAR}
+	]]>
+    </select>
+
+    <!-- 查询列表-->
+    <select id="selectColumns" resultMap="BaseResultMapForColumn">
+        SELECT
+            T1.COLUMN_NAME,
+            T1.TABLE_NAME,
+            T1.COLUMN_DEFAULT,
+            T1.IS_NULLABLE,
+            T1.COLUMN_TYPE,
+            T1.COLUMN_KEY,
+            T1.EXTRA,
+            T1.COLUMN_COMMENT
+        FROM
+          information_schema. COLUMNS T1
+        <where>
+            <if test="cm.keyword != null">
+                and (COLUMN_NAME like CONCAT('%',#{cm.keyword},'%') or COLUMN_COMMENT like CONCAT('%',#{cm.keyword},'%'))
+            </if>
+            and TABLE_NAME = #{cm.tableName}
+            and table_schema = 'loozb'
+        </where>
+        ORDER BY ORDINAL_POSITION asc
+    </select>
+
+</mapper>

@@ -265,9 +265,6 @@
             <version>${jackson.version}</version>
         </dependency>
 
-
-
-
         <!-- 导入Mysql数据库链接jar包 service -->
         <dependency>
             <groupId>mysql</groupId>

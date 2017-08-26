@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loozb.mapper.sys.CacheMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.loozb.model.sys.Cache">
+		<result column="id" property="id" />
+		<result column="ctime" property="ctime" />
+		<result column="mtime" property="mtime" />
+	</resultMap>
+
+	<resultMap id="RkResultMap" type="com.loozb.model.RedisKeyValue">
+		<result column="table_name" property="key" />
+		<result column="table_comment" property="value" />
+	</resultMap>
+
+
+	<select id="selectData" resultMap="BaseResultMap">
+		select id, ctime, mtime from ${cm.tableName}
+		<where>
+			<if test="cm.keyword != null and cm.keyword != ''">
+				and id like CONCAT('%',#{cm.keyword},'%')
+			</if>
+			and available = '1'
+		</where>
+		ORDER BY mtime DESC
+	</select>
+
+	<select id="selectTableName" resultMap="RkResultMap">
+		SELECT table_name, table_comment FROM information_schema.TABLES where TABLE_SCHEMA='loozb'
+	</select>
+</mapper>
