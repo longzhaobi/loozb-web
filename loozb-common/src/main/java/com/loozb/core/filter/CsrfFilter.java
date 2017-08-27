@@ -58,7 +58,7 @@ public class CsrfFilter implements Filter {
 				String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 				String clientIp = WebUtil.getHost(req);
 
-				log = clientIp + "||" + date + "||" + referurl + "||" + url;
+				log = "非法跨站请求||" + clientIp + "||" + date + "||" + referurl + "||" + url;
 				logger.warn(log);
 				return;
 			}
