@@ -21,6 +21,8 @@ import org.springframework.web.method.HandlerMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -79,10 +81,15 @@ public class EventInterceptor extends BaseInterceptor {
 			record.setRequestUri(request.getRequestURI());
 			record.setClientHost(WebUtil.getHost(request));
 			record.setUserAgent(userAgent);
+			Map<String, String[]> params = request.getParameterMap();
+			Map<String, String[]> mapFirst = new HashMap<>();
+			mapFirst.putAll(params);
+			mapFirst.remove("key");
+			mapFirst.remove("content");
 			if (path.contains("/upload/")) {
 				record.setParameters("");
 			} else {
-				record.setParameters(JSON.toJSONString(request.getParameterMap()));
+				record.setParameters(JSON.toJSONString(mapFirst));
 			}
 			record.setStatus(response.getStatus());
 			record.setCreateId(0L);
