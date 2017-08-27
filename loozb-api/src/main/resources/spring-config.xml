@@ -24,9 +24,9 @@
         </property>
         <property name="decryptProperties">
             <array>
-                <!-- 需要解密的配置 -->
+                <!-- 需要解密的配置
                 <value>db.password</value>
-                <value>db.password</value>
+                <value>db.password</value>-->
             </array>
         </property>
     </bean>
