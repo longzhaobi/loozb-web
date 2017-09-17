@@ -64,6 +64,9 @@ public class SysUser extends BaseModel {
 	@TableField(exist = false)
 	private String roleNames;
 
+	@TableField(exist = false)
+	private String online;
+
 
 	public Long getOrganId() {
 		return organId;
@@ -177,4 +180,11 @@ public class SysUser extends BaseModel {
 		this.roleNames = roleNames;
 	}
 
+	public String getOnline() {
+		return online;
+	}
+
+	public void setOnline(String online) {
+		this.online = online;
+	}
 }

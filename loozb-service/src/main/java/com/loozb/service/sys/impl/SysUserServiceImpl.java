@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -198,5 +200,31 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
             }
         }
         return new Authority(roles, permissions, menus, user);
+    }
+
+    /**
+     * 获取在线用户
+     *
+     * @param modelMap
+     * @param keyword
+     * @return
+     */
+    @Override
+    public Object queryOnlineUser(ModelMap modelMap, String keyword) {
+        Map<String, Object> params = ParamUtil.getMap();
+        params.put("keyword", keyword);
+        List<SysUser> list = super.queryList(params);
+        List<SysUser> result = new ArrayList<>();
+        for (SysUser user: list ) {
+            String key = "socket:socketIds:"+ user.getId();
+            String o = (String)CacheUtil.getCache().get(key);
+            if(StringUtils.isBlank(o)) {
+                user.setOnline("0");
+            } else {
+                user.setOnline("1");
+            }
+            result.add(user);
+        }
+        return result;
     }
 }

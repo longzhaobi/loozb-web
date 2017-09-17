@@ -151,4 +151,12 @@ public class SysUserController extends AbstractController<SysUserService> {
         return setSuccessModelMap(modelMap, service.exist(value, code));
     }
 
+    // 查询用户列表
+    @ApiOperation(value = "查询在线用户")
+    @RequiresPermissions("user:view")
+    @GetMapping("/onlineUser")
+    public Object queryOnlineUser(ModelMap modelMap, @RequestParam(value = "keyword", required = false) String keyword) {
+        return setSuccessModelMap(modelMap, service.queryOnlineUser(modelMap, keyword));
+    }
+
 }

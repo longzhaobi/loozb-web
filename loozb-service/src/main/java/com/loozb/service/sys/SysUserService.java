@@ -2,6 +2,7 @@ package com.loozb.service.sys;
 
 import com.loozb.core.base.BaseService;
 import com.loozb.model.SysUser;
+import org.springframework.ui.ModelMap;
 
 import java.util.Map;
 
@@ -51,4 +52,12 @@ public interface SysUserService extends BaseService<SysUser> {
      * @return
      */
     Object initAuth(Long id);
+
+    /**
+     * 获取在线用户
+     * @param modelMap
+     * @param keyword
+     * @return
+     */
+    Object queryOnlineUser(ModelMap modelMap, String keyword);
 }

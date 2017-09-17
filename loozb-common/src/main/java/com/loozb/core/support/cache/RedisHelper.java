@@ -43,7 +43,7 @@ public final class RedisHelper implements CacheManager, ApplicationContextAware 
     }
 
     public final Object get(final String key) {
-        expire(key, EXPIRE);
+//        expire(key, EXPIRE);
         return getRedis().boundValueOps(key).get();
     }
 
