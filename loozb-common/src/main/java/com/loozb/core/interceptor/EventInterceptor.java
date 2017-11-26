@@ -81,16 +81,16 @@ public class EventInterceptor extends BaseInterceptor {
 			record.setRequestUri(request.getRequestURI());
 			record.setClientHost(WebUtil.getHost(request));
 			record.setUserAgent(userAgent);
-			Map<String, String[]> params = request.getParameterMap();
-			Map<String, String[]> mapFirst = new HashMap<>();
-			mapFirst.putAll(params);
-			mapFirst.remove("key");
-			mapFirst.remove("content");
-			if (path.contains("/upload/")) {
-				record.setParameters("");
-			} else {
-				record.setParameters(JSON.toJSONString(mapFirst));
-			}
+//			Map<String, String[]> params = request.getParameterMap();
+//			Map<String, String[]> mapFirst = new HashMap<>();
+//			mapFirst.putAll(params);
+//			mapFirst.remove("key");
+//			mapFirst.remove("content");
+//			if (path.contains("/upload/")) {
+//				record.setParameters("");
+//			} else {
+//				record.setParameters(JSON.toJSONString(mapFirst));
+//			}
 			record.setStatus(response.getStatus());
 			record.setCreateId(0L);
 			final String msg = (String) request.getAttribute("msg");

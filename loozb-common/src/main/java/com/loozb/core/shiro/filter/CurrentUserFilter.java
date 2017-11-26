@@ -20,11 +20,11 @@ public class CurrentUserFilter extends PathMatchingFilter {
 	@Override
 	protected boolean onPreHandle(ServletRequest request,
 			ServletResponse response, Object mappedValue) throws Exception {
-		String token = CookieUtils.getCookieValue((HttpServletRequest)request, Constants.CURRENT_TOKEN);
+		String token = CookieUtils.getCookieValue((HttpServletRequest)request, Constants.TOKEN);
 		SysUser user = WebUtil.getUserByToken(token);
 		WebUtil.currentUser = user.getId();
-		request.setAttribute("user", user);
-		request.setAttribute("token", token);
+		request.setAttribute(Constants.CURRENT_USER, user);
+		request.setAttribute(Constants.TOKEN, token);
 		return true;
 	}
 }

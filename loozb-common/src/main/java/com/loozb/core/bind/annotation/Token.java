@@ -18,6 +18,6 @@ public @interface Token {
      *
      * @return
      */
-    String value() default Constants.CURRENT_TOKEN;
+    String value() default Constants.TOKEN;
 
 }

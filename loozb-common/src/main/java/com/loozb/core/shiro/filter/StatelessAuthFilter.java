@@ -26,6 +26,7 @@ public class StatelessAuthFilter extends AccessControlFilter {
 			ServletResponse servletResponse) throws Exception {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
+		System.out.println(request.getRequestURI());
 		String token = CookieUtils.getCookieValue(request, Constants.TOKEN);
 		StatelessToken statelessToken = new StatelessToken(token);
 		try {

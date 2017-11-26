@@ -1,7 +1,10 @@
 package com.loozb.model.sys;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.loozb.core.base.BaseModel;
+
+import java.util.List;
 
 
 /**
@@ -25,6 +28,8 @@ public class SysOrgan extends BaseModel {
      * 机构名称
      */
 	private String name;
+
+	private int weight;
     /**
      * 父子链
      */
@@ -33,6 +38,18 @@ public class SysOrgan extends BaseModel {
      * 描述
      */
 	private String description;
+
+	//扩展
+	@TableField(exist = false)
+	private List<SysOrgan> children;
+	@TableField(exist = false)
+	private Boolean leaf = true;
+	@TableField(exist = false)
+	private String title;
+
+	public String getTitle() {
+		return name;
+	}
 
 
 	public Long getPid() {
@@ -67,4 +84,26 @@ public class SysOrgan extends BaseModel {
 		this.description = description;
 	}
 
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
+	public List<SysOrgan> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<SysOrgan> children) {
+		this.children = children;
+	}
+
+	public Boolean getLeaf() {
+		return leaf;
+	}
+	public void setLeaf(Boolean leaf) {
+		this.leaf = leaf;
+	}
 }

@@ -64,6 +64,12 @@ public class SysResource extends BaseModel {
 	private Boolean leaf = true;
 	@TableField(exist = false)
 	private String permissionText;
+	@TableField(exist = false)
+	private String title;
+
+	public String getTitle() {
+		return name;
+	}
 
 	public Long getPid() {
 		return pid;

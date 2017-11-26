@@ -56,17 +56,14 @@
 				/index.jsp=anon
 				/register=anon
 				/login=anon
+				/online=anon
 				/errorInfos=anon
-				/*.ico=anon
 				/upload/*=anon
 				/unauthorized=anon
 				/forbidden=anon
-				/sns*=anon
 				/*/api-docs=anon
 				/callback*=anon
 				/swagger*=anon
-				/configuration/*=anon
-				/*/configuration/*=anon
 				/webjars/**=anon
 				/** = stateAuth, currentUser
 			</value>

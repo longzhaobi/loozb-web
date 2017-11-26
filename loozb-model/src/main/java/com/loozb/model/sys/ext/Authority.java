@@ -38,9 +38,10 @@ public class Authority {
     public Authority() {
     };
 
-    public Authority(String accessToken, SysUser user ) {
+    public Authority(String accessToken, SysUser user, Set<String> hasPermissions ) {
         this.token = accessToken;
         this.sysUser = user;
+        this.hasPermissions = hasPermissions;
     };
 
     public Authority(Set<String> hasRoles, Set<String> hasPermissions, List<SysResource> hasMenus, SysUser user) {

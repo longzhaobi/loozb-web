@@ -43,7 +43,7 @@ public class SysPermissionController extends AbstractController<SysPermissionSer
 
     // 添加资源时，初始化权限信息
     @ApiOperation(value = "初始化权限信息")
-    @RequiresPermissions("permission:view")
+//    @RequiresPermissions("permission:view")
     @GetMapping("/init")
     public Object init(ModelMap modelMap) {
         Map<String, Object> params = ParamUtil.getMap();
@@ -97,7 +97,7 @@ public class SysPermissionController extends AbstractController<SysPermissionSer
 
 
     @ApiOperation(value = "查询权限列表")
-    @RequiresPermissions("permission:view")
+//    @RequiresPermissions("permission:view")
     @GetMapping("/columns")
     public Object columns(ModelMap modelMap) {
         Map<String, Object> params = ParamUtil.getMap();

@@ -73,9 +73,9 @@ public class SysUserController extends AbstractController<SysUserService> {
     public Object update(ModelMap modelMap, SysUser param) {
         Assert.notNull(param, "USER");
         Assert.notNull(param.getId(), "ID");
-        if(StringUtils.isNotBlank(param.getIdcard())) {
-            Assert.idCard(param.getIdcard());
-        }
+//        if(StringUtils.isNotBlank(param.getIdcard())) {
+//            Assert.idCard(param.getIdcard());
+//        }
         SysUser user = service.queryById(param.getId());
         Assert.notNull(user, "USER", param.getId());
         if(StringUtils.isNotBlank(param.getPassword())) {

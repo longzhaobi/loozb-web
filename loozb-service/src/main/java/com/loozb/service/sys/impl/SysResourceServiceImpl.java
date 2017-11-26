@@ -42,6 +42,11 @@ public class SysResourceServiceImpl extends BaseServiceImpl<SysResource> impleme
     private SysRoleResourcePermissionServiceImpl sysRoleResourcePermissionService;
 
     @Override
+    public void del(Long id) {
+        super.del(id);
+    }
+
+    @Override
     public List<SysResource> queryList(Map<String, Object> params) {
         List<SysResource> list = super.queryList(params);
 

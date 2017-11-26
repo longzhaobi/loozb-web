@@ -8,10 +8,7 @@ import com.loozb.core.bind.annotation.Token;
 import com.loozb.core.exception.IllegalParameterException;
 import com.loozb.core.support.Assert;
 import com.loozb.core.support.HttpCode;
-import com.loozb.core.util.CacheUtil;
-import com.loozb.core.util.ParamUtil;
-import com.loozb.core.util.PasswordUtil;
-import com.loozb.core.util.WebUtil;
+import com.loozb.core.util.*;
 import com.loozb.model.sys.SysAuth;
 import com.loozb.model.sys.SysSession;
 import com.loozb.model.SysUser;
@@ -28,10 +25,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 用户登录
@@ -90,10 +84,15 @@ public class LoginController extends AbstractController<SysUserService> {
                 user.setPassword(null);
                 user.setSalt(null);
 
+                /**
+                 * 获取权限
+                 */
+                Set<String> permissions = sysAuthService.findPermissions(userId);
+
                 CacheUtil.getCache().set(Constants.REDIS_SESSION_TOKEN + accessToken, user, 1800);
                 CacheUtil.getCache().set(Constants.REDIS_SESSION_ID + user.getId(), accessToken, 1800);
                 saveSession(account, request, accessToken, user);
-                return setSuccessModelMap(modelMap, new Authority(accessToken ,user));
+                return setSuccessModelMap(modelMap, new Authority(accessToken ,user, permissions));
             } else {
                 throw new IllegalArgumentException("用户名或密码错误");
             }
@@ -171,5 +170,20 @@ public class LoginController extends AbstractController<SysUserService> {
     @RequestMapping(value = "/forbidden", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public Object forbidden(ModelMap modelMap) {
         return setModelMap(modelMap, HttpCode.FORBIDDEN);
+    }
+
+    @ApiOperation(value = "判断是否登录")
+    @RequestMapping(value = "/online", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+    public Object online(ModelMap modelMap, HttpServletRequest request) {
+        String token = CookieUtils.getCookieValue(request, Constants.TOKEN);
+        if(StringUtils.isBlank(token)) {
+            //如果为空，直接返回已经登录失效
+            return setModelMap(modelMap, HttpCode.UNAUTHORIZED);
+        }
+        SysUser user = WebUtil.getUserByToken(token);
+        if(null == user) {
+            return setModelMap(modelMap, HttpCode.UNAUTHORIZED);
+        }
+        return setSuccessModelMap(modelMap);
     }
 }

@@ -1,3 +1,4 @@
 upload/imageData
 errorInfos
 articles
+downFile
